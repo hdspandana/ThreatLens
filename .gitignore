@@ -1,0 +1,47 @@
+﻿# Virtual environment
+venv/
+env/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Environment / secrets
+.env
+
+# Evidence and case data - NEVER commit real evidence or case records
+data/evidence_store/*
+!data/evidence_store/.gitkeep
+
+data/cases/*
+!data/cases/.gitkeep
+
+# Evaluation working data
+eval/output/
+eval/*.tmp
+
+# OS/editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Streamlit local config/cache
+.streamlit/
+
+# Model caches (EasyOCR, transformers, torch)
+.EasyOCR/
+*.pt
+*.pth
+
+# Generated report output
+*.pdf
+!templates/*.pdf
+
+# pytest cache
+.pytest_cache/
