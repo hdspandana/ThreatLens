@@ -45,3 +45,12 @@ Thumbs.db
 
 # pytest cache
 .pytest_cache/
+
+# Manual OCR language test images (Section 15) - not part of the repo
+ocr_manual_test_images/
+
+# Manual OCR language test images (Section 15) - not part of the repo
+ocr_manual_test_images/
+
+# Manual OCR language test images (Section 15) - not part of the repo
+ocr_manual_test_images/
