@@ -314,7 +314,7 @@ class LLMSummary(BaseModel):
     the deterministic fallback text instead.
     """
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = ConfigDict(extra="forbid", protected_namespaces=())
 
     model_used: Optional[str] = Field(
         default=None, description="Name of the local model used, e.g. 'mistral'. None if not used."
