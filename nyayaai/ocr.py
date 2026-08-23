@@ -23,16 +23,28 @@ IMPORTANT HONESTY NOTES (do not remove these when editing this file):
    always unverified by construction.
 
 4. Whether Hindi/Hinglish OCR actually performs adequately has NOT
-   been claimed here - it must be tested manually (see
-   tests/manual_ocr_language_check.py) before any language-support
-   claim is made in documentation.
+   been broadly claimed here - it was tested manually with n=1 per
+   language (see docs/ocr_language_findings_phase3.md). Findings:
+   English and Devanagari Hindi text extracted correctly in that
+   sample; "Hinglish" is Latin-script text read by the English model,
+   not genuine Hinglish language understanding.
+
+5. Optional preprocessing (grayscale + contrast enhancement) was
+   added after observing a single-character detection failure
+   ("I" dropped) during manual testing. It is OFF BY DEFAULT and its
+   effectiveness must be verified empirically by direct A/B
+   comparison (see tests/manual_ocr_language_check.py --preprocess),
+   not assumed to be an improvement.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
+
+import numpy as np
+from PIL import Image, ImageEnhance
 
 import easyocr
 
@@ -40,13 +52,21 @@ from nyayaai.schema import OCRResult
 
 # EasyOCR language codes. "en" = English, "hi" = Hindi (Devanagari
 # script). EasyOCR has no dedicated Romanized-Hindi/Hinglish model -
-# Hinglish text will be read using whichever of these two models
-# happens to recognize the Latin characters, with unverified quality.
+# Hinglish text is read using the "en" model since it uses Latin
+# characters, with no semantic Hindi understanding involved.
 DEFAULT_LANGUAGES: Tuple[str, ...] = ("en", "hi")
 
 # Heuristic starting threshold for flagging low-confidence OCR results
-# in the UI. Not derived from a measured requirement.
+# in the UI. Not derived from a measured requirement. Manual testing
+# (n=1) showed a correctly-transcribed Devanagari sample scoring
+# BELOW this threshold, meaning this gate may over-flag correct
+# Hindi text for review - an open question for the full evaluation
+# phase (see docs/ocr_language_findings_phase3.md).
 LOW_CONFIDENCE_THRESHOLD = 0.5
+
+# Heuristic default contrast multiplier for optional preprocessing.
+# Not scientifically tuned - a reasonable starting point only.
+DEFAULT_CONTRAST_FACTOR = 1.5
 
 # Module-level cache of initialized EasyOCR readers, keyed by the
 # language tuple. Reader initialization is expensive (loads models
@@ -79,6 +99,7 @@ class OCRExtractionResult:
     regions: List[DetectedTextRegion] = field(default_factory=list)
     error_message: Optional[str] = None
     languages_used: List[str] = field(default_factory=list)
+    preprocessing_applied: bool = False
 
 
 def get_reader(languages: Tuple[str, ...]) -> "easyocr.Reader":
@@ -91,6 +112,36 @@ def get_reader(languages: Tuple[str, ...]) -> "easyocr.Reader":
     if languages not in _READER_CACHE:
         _READER_CACHE[languages] = easyocr.Reader(list(languages), gpu=False)
     return _READER_CACHE[languages]
+
+
+def preprocess_image_for_ocr(
+    image_path: Path, contrast_factor: float = DEFAULT_CONTRAST_FACTOR
+) -> Image.Image:
+    """Apply basic preprocessing to a source image to attempt to
+    improve OCR detection quality.
+
+    Preprocessing is deliberately simple and heuristic:
+        1. Convert to grayscale.
+        2. Increase contrast by a fixed multiplicative factor.
+
+    This was added after observing a single-character detection
+    failure during manual testing (Section 15) - it is a heuristic
+    starting point, NOT a scientifically tuned pipeline. Whether this
+    actually improves results must be verified empirically by
+    comparing OCR output with and without this step - never assumed.
+
+    Args:
+        image_path: Path to the source image file.
+        contrast_factor: Multiplier for contrast enhancement. 1.0
+            leaves contrast unchanged; >1.0 increases it.
+
+    Returns:
+        A new, preprocessed PIL Image. The original file on disk is
+        never modified (Section 13: evidence must remain unmodified).
+    """
+    image = Image.open(image_path).convert("L")
+    enhancer = ImageEnhance.Contrast(image)
+    return enhancer.enhance(contrast_factor)
 
 
 def compute_document_confidence(confidences: List[float]) -> Optional[float]:
@@ -139,6 +190,8 @@ def is_low_confidence(confidence: Optional[float]) -> bool:
 def run_ocr(
     image_path: Path,
     languages: Optional[List[str]] = None,
+    apply_preprocessing: bool = False,
+    contrast_factor: float = DEFAULT_CONTRAST_FACTOR,
 ) -> OCRExtractionResult:
     """Run OCR on a single image file and return the extraction result.
 
@@ -151,6 +204,13 @@ def run_ocr(
         image_path: Path to the image file to run OCR on.
         languages: EasyOCR language codes to use. Defaults to
             DEFAULT_LANGUAGES ("en", "hi").
+        apply_preprocessing: If True, applies grayscale + contrast
+            enhancement before running OCR (see
+            preprocess_image_for_ocr). Default False - preprocessing
+            is opt-in, not automatic, until proven beneficial by
+            direct comparison.
+        contrast_factor: Contrast multiplier used only if
+            apply_preprocessing=True.
 
     Returns:
         An OCRExtractionResult. Check `.success` before using `.raw_text`.
@@ -159,7 +219,15 @@ def run_ocr(
 
     try:
         reader = get_reader(tuple(languages))
-        raw_detections = reader.readtext(str(image_path))
+
+        ocr_input: Union[str, "np.ndarray"]
+        if apply_preprocessing:
+            preprocessed = preprocess_image_for_ocr(image_path, contrast_factor)
+            ocr_input = np.array(preprocessed)
+        else:
+            ocr_input = str(image_path)
+
+        raw_detections = reader.readtext(ocr_input)
     except Exception as exc:  # noqa: BLE001 - intentionally broad: OCR
         # failures must never crash the pipeline (Section 34).
         return OCRExtractionResult(
@@ -169,6 +237,7 @@ def run_ocr(
             regions=[],
             error_message=str(exc),
             languages_used=languages,
+            preprocessing_applied=apply_preprocessing,
         )
 
     regions = [
@@ -187,6 +256,7 @@ def run_ocr(
         regions=regions,
         error_message=None,
         languages_used=languages,
+        preprocessing_applied=apply_preprocessing,
     )
 
 

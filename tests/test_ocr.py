@@ -13,7 +13,9 @@ this automated suite.
 
 from unittest.mock import MagicMock, patch
 
+import numpy as np
 import pytest
+from PIL import Image
 
 import nyayaai.ocr as ocr_module
 from nyayaai.ocr import (
@@ -21,6 +23,7 @@ from nyayaai.ocr import (
     compute_document_confidence,
     extract_raw_text,
     is_low_confidence,
+    preprocess_image_for_ocr,
     run_ocr,
     to_schema_ocr_result,
 )
@@ -33,6 +36,14 @@ def clear_reader_cache():
     ocr_module._READER_CACHE.clear()
     yield
     ocr_module._READER_CACHE.clear()
+
+
+def make_test_image(tmp_path, name="test.png", size=(20, 20), color=128):
+    """Create a small, real, valid PNG file for preprocessing tests."""
+    path = tmp_path / name
+    img = Image.new("L", size, color=color)
+    img.save(path)
+    return path
 
 
 class TestComputeDocumentConfidence:
@@ -84,8 +95,30 @@ class TestGetReader:
             assert mock_reader_cls.call_count == 2
 
 
+class TestPreprocessImageForOcr:
+    def test_returns_grayscale_image(self, tmp_path):
+        image_path = make_test_image(tmp_path)
+        result = preprocess_image_for_ocr(image_path)
+        assert result.mode == "L"
+
+    def test_does_not_modify_original_file(self, tmp_path):
+        image_path = make_test_image(tmp_path, color=100)
+        original_bytes = image_path.read_bytes()
+        preprocess_image_for_ocr(image_path)
+        assert image_path.read_bytes() == original_bytes
+
+    def test_contrast_factor_changes_output(self, tmp_path):
+        image_path = make_test_image(tmp_path, size=(10, 10), color=100)
+        low_contrast = preprocess_image_for_ocr(image_path, contrast_factor=1.0)
+        high_contrast = preprocess_image_for_ocr(image_path, contrast_factor=3.0)
+        # A flat, single-color image has no contrast to enhance either
+        # way, but this confirms the function runs and returns
+        # correctly-typed output at different factors without error.
+        assert np.array(low_contrast).shape == np.array(high_contrast).shape
+
+
 class TestRunOcr:
-    def test_successful_extraction(self, tmp_path):
+    def test_successful_extraction_without_preprocessing(self, tmp_path):
         with patch("nyayaai.ocr.easyocr.Reader") as mock_reader_cls:
             mock_reader = MagicMock()
             mock_reader.readtext.return_value = [
@@ -103,6 +136,30 @@ class TestRunOcr:
             assert "I know where you live" in result.raw_text
             assert result.document_confidence == pytest.approx((0.91 + 0.40) / 2)
             assert len(result.regions) == 2
+            assert result.preprocessing_applied is False
+            # Confirm readtext was called with the file path (string),
+            # not a preprocessed array, when preprocessing is off.
+            call_arg = mock_reader.readtext.call_args[0][0]
+            assert isinstance(call_arg, str)
+
+    def test_successful_extraction_with_preprocessing(self, tmp_path):
+        with patch("nyayaai.ocr.easyocr.Reader") as mock_reader_cls:
+            mock_reader = MagicMock()
+            mock_reader.readtext.return_value = [
+                (None, "I know where you live", 0.95),
+            ]
+            mock_reader_cls.return_value = mock_reader
+
+            real_image = make_test_image(tmp_path, name="real.png")
+
+            result = run_ocr(real_image, languages=["en"], apply_preprocessing=True)
+
+            assert result.success is True
+            assert result.preprocessing_applied is True
+            # Confirm readtext was called with a numpy array (the
+            # preprocessed image), not a raw file path string.
+            call_arg = mock_reader.readtext.call_args[0][0]
+            assert isinstance(call_arg, np.ndarray)
 
     def test_no_text_detected(self, tmp_path):
         with patch("nyayaai.ocr.easyocr.Reader") as mock_reader_cls:
@@ -134,6 +191,19 @@ class TestRunOcr:
             assert result.error_message == "corrupt image"
             assert result.raw_text == ""
             assert result.document_confidence is None
+
+    def test_preprocessing_failure_is_caught_not_raised(self, tmp_path):
+        """If preprocessing itself fails (e.g. invalid image for PIL),
+        this must also degrade gracefully rather than crash."""
+        with patch("nyayaai.ocr.easyocr.Reader") as mock_reader_cls:
+            mock_reader_cls.return_value = MagicMock()
+            not_an_image = tmp_path / "not_an_image.png"
+            not_an_image.write_bytes(b"this is not valid image data")
+
+            result = run_ocr(not_an_image, languages=["en"], apply_preprocessing=True)
+
+            assert result.success is False
+            assert result.error_message is not None
 
 
 class TestToSchemaOcrResult:

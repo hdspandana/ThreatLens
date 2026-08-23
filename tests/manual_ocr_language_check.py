@@ -4,25 +4,12 @@ Manual OCR language verification script (Section 15).
 This is NOT an automated pytest test - it does not start with
 "test_" so pytest will not collect it. Run it directly:
 
-    python tests/manual_ocr_language_check.py <path_to_image>
+    python tests/manual_ocr_language_check.py <path_to_image> [--preprocess]
 
-Purpose: honestly test (not assume) how EasyOCR performs on:
-    1. English
-    2. Devanagari Hindi
-    3. Romanized Hindi / Hinglish
-
-BEFORE creating any documentation claim about language support.
-
-How to create test images:
-    1. Open Notepad, WhatsApp Web, or any text app.
-    2. Type each of these three sentences separately:
-         English:          I know where you live.
-         Devanagari Hindi: paste: Mujhe pata hai tum kahan rehte ho.
-         Hinglish:         Mujhe pata hai tum kahan rehte ho.
-    3. Take a screenshot of each (PNG format).
-    4. Save them in ocr_manual_test_images/ (already gitignored).
-    5. Run this script against each image and record what actually
-       happens - do not assume, read the output.
+Use --preprocess to test the optional grayscale + contrast
+enhancement step (see nyayaai/ocr.py: preprocess_image_for_ocr).
+Run the SAME image with and without --preprocess and compare the
+output honestly before concluding whether preprocessing helps.
 """
 
 import sys
@@ -34,20 +21,29 @@ from nyayaai.ocr import DEFAULT_LANGUAGES, run_ocr  # noqa: E402
 
 
 def main() -> None:
-    if len(sys.argv) != 2:
-        print("Usage: python tests/manual_ocr_language_check.py <path_to_image>")
+    args = sys.argv[1:]
+    apply_preprocessing = "--preprocess" in args
+    positional = [a for a in args if a != "--preprocess"]
+
+    if len(positional) != 1:
+        print("Usage: python tests/manual_ocr_language_check.py <path_to_image> [--preprocess]")
         sys.exit(1)
 
-    image_path = Path(sys.argv[1])
+    image_path = Path(positional[0])
     if not image_path.exists():
         print(f"File not found: {image_path}")
         sys.exit(1)
 
     print(f"Running OCR on: {image_path}")
     print(f"Languages: {DEFAULT_LANGUAGES}")
+    print(f"Preprocessing enabled: {apply_preprocessing}")
     print("(First run downloads OCR models - this may take a few minutes.)\n")
 
-    result = run_ocr(image_path, languages=list(DEFAULT_LANGUAGES))
+    result = run_ocr(
+        image_path,
+        languages=list(DEFAULT_LANGUAGES),
+        apply_preprocessing=apply_preprocessing,
+    )
 
     print("SUCCESS:", result.success)
     if not result.success:
