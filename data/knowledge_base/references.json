@@ -1,0 +1,61 @@
+{
+  "_notice": "DEVELOPMENT REFERENCE DATASET. This is a small, hand-curated set of general safety/reporting guidance used to demonstrate ThreatLens's retrieval layer. It is NOT legal advice, NOT jurisdiction-specific, and NOT an exhaustive resource list. Only well-known, real public hotlines are referenced; no statute or case citations are included because this project cannot verify legal citations reliably.",
+  "documents": [
+    {
+      "id": "kb-001",
+      "title": "Immediate safety first",
+      "source": "ThreatLens development reference dataset",
+      "category": "safety",
+      "content": "If you believe you are in immediate physical danger, contact your local emergency services number right away (for example, 911 in the United States, 999 in the United Kingdom, 112 in the European Union). Evidence documentation should never delay an emergency response. Consider whether you need to change your physical location, alert someone you trust, or involve law enforcement before continuing to document an incident."
+    },
+    {
+      "id": "kb-002",
+      "title": "Preserving digital evidence of harassment or threats",
+      "source": "ThreatLens development reference dataset",
+      "category": "evidence",
+      "content": "When you receive threatening, harassing, or abusive messages, avoid deleting or editing the original content. Take full, unedited screenshots that include usernames, phone numbers, timestamps, and platform context where possible. Keep a copy of the original file separate from any notes you add. Recording a cryptographic hash (such as SHA-256) of a screenshot can later demonstrate the file has not been altered since it was collected, but a hash alone does not prove the underlying content itself was never staged or manipulated before capture -- it only proves file integrity from the point of capture forward."
+    },
+    {
+      "id": "kb-003",
+      "title": "Recognizing stalking behavior patterns",
+      "source": "ThreatLens development reference dataset",
+      "category": "stalking",
+      "content": "Stalking often involves a pattern of repeated, unwanted contact or surveillance rather than a single incident: someone following you, watching your house or workplace, repeated messages after being asked to stop, showing up uninvited at your home or work, monitoring your location or online activity, or contacting friends and family to gather information about you. A single message rarely establishes a pattern; documenting the frequency and timeline of contact over time is important context for assessing risk."
+    },
+    {
+      "id": "kb-004",
+      "title": "Extortion and blackmail warning signs",
+      "source": "ThreatLens development reference dataset",
+      "category": "extortion",
+      "content": "Extortion or blackmail typically involves a demand (commonly money, gift cards, cryptocurrency, or additional compliance) paired with a threat to cause harm or release private material, such as photos or personal information, if the demand is not met. Paying a demand does not reliably stop further demands. Preserving the original messages, payment requests, and any account identifiers involved is useful if you later choose to report the incident."
+    },
+    {
+      "id": "kb-005",
+      "title": "Getting support: hotlines and reporting options",
+      "source": "ThreatLens development reference dataset",
+      "category": "support",
+      "content": "In the United States, the National Domestic Violence Hotline can be reached at 1-800-799-7233 and offers 24/7 confidential support. RAINN's National Sexual Assault Hotline can be reached at 1-800-656-4673. Most countries have a national cybercrime reporting unit or equivalent; many social media and messaging platforms also provide in-app reporting and blocking tools. This project does not track or verify which specific option is appropriate for your jurisdiction -- please treat this as a general starting point, not a directory."
+    },
+    {
+      "id": "kb-006",
+      "title": "Understanding AI-assisted analysis limitations",
+      "source": "ThreatLens development reference dataset",
+      "category": "system",
+      "content": "Automated systems, including this one, can miss context, sarcasm, or coded language, and can also flag benign text incorrectly. A rule-based or machine-learning signal is a prompt for human review, not a verdict. Only qualified professionals (law enforcement, legal counsel, licensed counselors) can make determinations about legal culpability or clinical risk. Treat severity labels produced by this tool as decision-support, not as a finding of fact."
+    },
+    {
+      "id": "kb-007",
+      "title": "Coercive control and repeated pressure tactics",
+      "source": "ThreatLens development reference dataset",
+      "category": "coercion",
+      "content": "Coercion often shows up as conditional statements that pair a demand with a threatened consequence ('do X or I will Y'), escalating pressure after refusal, or exploiting fear, obligation, or guilt to control another person's behavior. Isolated persuasive language is common and not inherently abusive; repeated conditional threats directed at a specific person are the stronger indicator."
+    },
+    {
+      "id": "kb-008",
+      "title": "Impersonation and scam-adjacent contact",
+      "source": "ThreatLens development reference dataset",
+      "category": "impersonation",
+      "content": "Messages claiming to be from a bank, government agency, or law enforcement that pressure urgent action, request payment via gift cards or cryptocurrency, or ask for account credentials are commonly associated with impersonation scams. Verifying identity through an independently looked-up phone number or official website (not a number provided in the suspicious message) is a standard precaution."
+    }
+  ]
+}
