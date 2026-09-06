@@ -19,6 +19,9 @@
  */
 import { settings } from "../config/settings";
 import type { RiskAssessment, SeverityLevelT, SignalCategoryT, ThreatSignal } from "../schemas/models";
+import { makeProvenance, VERSIONS, textRef } from "../provenance";
+
+export const RISK_ENGINE_VERSION = VERSIONS.riskEngine;
 
 /** Documented severity tier per category (3 = most severe class of harm). */
 const CATEGORY_TIER: Record<SignalCategoryT, number> = {
@@ -46,6 +49,8 @@ function severityFromScore(score: number): SeverityLevelT {
 export function assessRisk(params: { normalizedText: string; signals: ThreatSignal[]; ocrConfidence: number | null }): RiskAssessment {
   const { normalizedText, signals, ocrConfidence } = params;
 
+  const derivedFrom = [textRef(normalizedText), ...signals.map((s) => `signal:${s.detectorId}@${s.startOffset}`)];
+
   if (normalizedText.trim().length < settings.risk.minTextLengthForAssessment) {
     return {
       severity: "INSUFFICIENT_INFORMATION",
@@ -57,6 +62,16 @@ export function assessRisk(params: { normalizedText: string; signals: ThreatSign
       },
       explanation:
         "There is not enough verified text to assess risk. Please verify/enter the message content before analyzing.",
+      engineVersion: RISK_ENGINE_VERSION,
+      provenance: makeProvenance({
+        status: "UNCERTAIN",
+        sourceType: "RISK_ENGINE",
+        sourceId: "risk_scorer",
+        sourceVersion: RISK_ENGINE_VERSION,
+        confidence: null,
+        explanation: "Insufficient verified text; no score computed.",
+        derivedFrom,
+      }),
     };
   }
 
@@ -77,6 +92,7 @@ export function assessRisk(params: { normalizedText: string; signals: ThreatSign
       category,
       weight: tier,
       count: matches.length,
+      contribution: Math.round(categoryContribution * 100) / 100,
       description: `${matches.length} ${category.replace(/_/g, " ")} signal(s) detected, severity tier ${tier}.`,
     });
   }
@@ -110,5 +126,16 @@ export function assessRisk(params: { normalizedText: string; signals: ThreatSign
     contributingFactors,
     uncertainty: { level: uncertaintyLevel, reasons: uncertaintyReasons },
     explanation,
+    engineVersion: RISK_ENGINE_VERSION,
+    provenance: makeProvenance({
+      status: "INFERRED",
+      sourceType: "RISK_ENGINE",
+      sourceId: "risk_scorer",
+      sourceVersion: RISK_ENGINE_VERSION,
+      confidence: null,
+      explanation:
+        "Documented additive heuristic: sum over categories of (severity tier x rule confidence), capped at 10, mapped to thresholds. Not a calibrated or validated model.",
+      derivedFrom,
+    }),
   };
 }

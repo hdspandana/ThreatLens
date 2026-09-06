@@ -6,7 +6,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "eval:classifier": "tsx eval/evaluate_classifier.ts",
+    "eval:retrieval": "tsx eval/evaluate_retrieval.ts",
+    "eval:ocr": "tsx eval/evaluate_ocr.ts",
+    "eval": "npm run eval:classifier && npm run eval:retrieval && npm run eval:ocr"
   },
   "dependencies": {
     "dotenv": "17.3.1",

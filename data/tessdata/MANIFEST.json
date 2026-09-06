@@ -1,0 +1,24 @@
+{
+  "_notice": "Integrity manifest for bundled OCR language data. ocr/service.ts verifies the on-disk file against these hashes before creating a tesseract worker so a corrupted or tampered model is reported explicitly instead of failing silently. Regenerate with: sha256sum data/tessdata/<file>.",
+  "files": {
+    "eng.traineddata.gz": {
+      "language": "eng",
+      "source": "https://github.com/tesseract-ocr/tessdata_fast (eng.traineddata, LSTM-only 'fast' integer model)",
+      "license": "Apache-2.0",
+      "modelFamily": "tessdata_fast",
+      "compression": "gzip",
+      "sha256Gzipped": "ed7fad25d49599fe024f4af8d607387d12174089172fbd8e0610a1f5f81e600d",
+      "sha256Uncompressed": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+      "uncompressedBytes": 4113088
+    },
+    "eng.traineddata": {
+      "language": "eng",
+      "source": "https://github.com/tesseract-ocr/tessdata_fast",
+      "license": "Apache-2.0",
+      "modelFamily": "tessdata_fast",
+      "compression": "none",
+      "sha256Uncompressed": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2",
+      "uncompressedBytes": 4113088
+    }
+  }
+}

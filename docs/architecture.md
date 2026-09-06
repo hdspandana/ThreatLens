@@ -105,3 +105,25 @@ system prompt explicitly forbids inventing facts, citations, or legal
 conclusions. If no API key is configured, if the call fails, or if it times
 out, a deterministic template-based summary is returned instead -- the rest
 of the pipeline (signals, risk, retrieval, report) is entirely unaffected.
+
+
+## Phase 1 additions (foundation hardening)
+
+- **Provenance layer** (`provenance.ts`, `docs/provenance.md`): every stage
+  output carries `{status, sourceType, sourceId, sourceVersion, confidence,
+  timestamp, explanation, derivedFrom}`; every analysis carries a
+  `PipelineVersions` block and the SHA-256 of its input text.
+- **Security layer** (`security/`): UUID route guard, `Content-Length`
+  pre-check, content-free structured logger with correlation ids, evidence
+  trust boundary for the LLM prompt, output guard, markdown escaping. See
+  `docs/threat_model.md`.
+- **Data model**: `cases` (+ `evidence.case_id`), `audit_events`
+  (append-only), `review_decisions` (human decisions stored alongside
+  immutable machine output). Version/provenance columns on `ocr_results`,
+  `verified_texts` (`text_sha256`) and `analyses`.
+- **OCR**: bundled `tessdata_fast` English model, gzipped and pinned by
+  `data/tessdata/MANIFEST.json`; verified before the worker starts;
+  tesseract.js caching disabled so it can never modify bundled data.
+- **Classifier contract**: `ThreatClassifier.metadata()` and
+  `ClassificationResult { signals, categoryScores, metadata }` prepare the
+  Phase 2 ML classifier without changing the rule baseline.

@@ -41,6 +41,8 @@ export const settings = {
   ocrLanguage: envString("THREATLENS_OCR_LANGUAGE", "eng"),
   /** Below this confidence (0-100), the UI must prompt for human verification. */
   ocrLowConfidenceThreshold: envFloat("THREATLENS_OCR_LOW_CONFIDENCE", 65),
+  /** Hard ceiling for a single OCR job (worker start + recognition). Prevents a hung worker from stalling requests. */
+  ocrTimeoutMs: envInt("THREATLENS_OCR_TIMEOUT_MS", 60000),
 
   upload: {
     maxSizeBytes: envInt("THREATLENS_MAX_UPLOAD_BYTES", 10 * 1024 * 1024),

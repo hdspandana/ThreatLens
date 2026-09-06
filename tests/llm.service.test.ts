@@ -1,14 +1,8 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import type { ProcessedText, RiskAssessment } from "@/lib/threatlens/schemas/models";
+import { processedTextFixture, riskFixture } from "./fixtures";
 
-const processedText: ProcessedText = { normalizedText: "I will hurt you", segments: ["I will hurt you"], changesApplied: [] };
-const risk: RiskAssessment = {
-  severity: "HIGH",
-  score: 6,
-  contributingFactors: [],
-  uncertainty: { level: "LOW", reasons: [] },
-  explanation: "test",
-};
+const processedText = processedTextFixture("I will hurt you");
+const risk = riskFixture();
 
 describe("generateExplanation", () => {
   const ORIGINAL_ENV = { ...process.env };

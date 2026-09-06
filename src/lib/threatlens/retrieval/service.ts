@@ -14,8 +14,11 @@
  * the rest of the app depends on, so the implementation can be swapped.
  */
 import { settings } from "../config/settings";
-import { loadKnowledgeChunks, type KnowledgeChunk } from "./knowledgeBase";
+import { knowledgeBaseVersion, loadKnowledgeChunks, type KnowledgeChunk } from "./knowledgeBase";
 import type { RetrievedReference } from "../schemas/models";
+import { makeProvenance, VERSIONS, textRef } from "../provenance";
+
+export const RETRIEVAL_METHOD_VERSION = VERSIONS.retrievalMethod;
 
 const STOPWORDS = new Set([
   "the", "a", "an", "and", "or", "is", "are", "was", "were", "be", "been", "to", "of", "in",
@@ -117,11 +120,27 @@ export function retrieveReferences(query: string, topK: number = settings.retrie
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, topK);
 
-  return scored.map(({ chunk, similarity }) => ({
-    documentId: chunk.documentId,
-    title: chunk.title,
-    source: chunk.source,
-    snippet: chunk.text.length > 400 ? `${chunk.text.slice(0, 400)}…` : chunk.text,
-    similarity: Math.round(similarity * 1000) / 1000,
-  }));
+  const kbVersion = knowledgeBaseVersion();
+  const queryRef = textRef(trimmed);
+  return scored.map(({ chunk, similarity }) => {
+    const rounded = Math.round(similarity * 1000) / 1000;
+    return {
+      documentId: chunk.documentId,
+      chunkIndex: chunk.chunkIndex,
+      title: chunk.title,
+      source: chunk.source,
+      snippet: chunk.text.length > 400 ? `${chunk.text.slice(0, 400)}…` : chunk.text,
+      similarity: rounded,
+      knowledgeBaseVersion: kbVersion,
+      provenance: makeProvenance({
+        status: "RETRIEVED",
+        sourceType: "RETRIEVAL",
+        sourceId: `${chunk.documentId}#${chunk.chunkIndex}`,
+        sourceVersion: kbVersion,
+        confidence: Math.min(1, rounded),
+        explanation: `Local TF-IDF cosine match (${RETRIEVAL_METHOD_VERSION}) against the bundled reference dataset; similarity is lexical, not a relevance guarantee.`,
+        derivedFrom: [queryRef],
+      }),
+    };
+  });
 }

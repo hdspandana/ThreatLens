@@ -8,6 +8,10 @@
  * become part of an incident record.
  */
 import type { ProcessedText } from "../schemas/models";
+import { makeProvenance, VERSIONS, textRef } from "../provenance";
+import { detectInjectionIndicators } from "../security";
+
+export const TEXT_PROCESSING_VERSION = VERSIONS.textProcessing;
 
 /** Common OCR ligature / artifact substitutions that don't change meaning. */
 const OCR_ARTIFACT_REPLACEMENTS: Array<[RegExp, string]> = [
@@ -58,7 +62,24 @@ export function processText(rawVerifiedText: string): ProcessedText {
   // patterns, falling back to sentence-ish splitting for a single block.
   const segments = segmentMessages(normalizedText);
 
-  return { normalizedText, segments, changesApplied };
+  // Record (do not remove) instruction-like content. The text is evidence and
+  // must be preserved verbatim; downstream LLM stages treat it as data.
+  const injectionIndicators = detectInjectionIndicators(normalizedText);
+
+  const provenance = makeProvenance({
+    status: "FOUND",
+    sourceType: "USER_VERIFIED",
+    sourceId: "text_processing",
+    sourceVersion: TEXT_PROCESSING_VERSION,
+    confidence: null,
+    explanation:
+      "Human-verified transcription after conservative, meaning-preserving normalization (" +
+      (changesApplied.length > 0 ? changesApplied.join(", ") : "no changes") +
+      ").",
+    derivedFrom: [textRef(rawVerifiedText)],
+  });
+
+  return { normalizedText, segments, changesApplied, injectionIndicators, provenance };
 }
 
 function segmentMessages(text: string): string[] {

@@ -9,6 +9,13 @@ workflow:
 UPLOAD → PRESERVE → EXTRACT (OCR) → VERIFY → ANALYZE → ASSESS → RETRIEVE → EXPLAIN → DOCUMENT
 ```
 
+> **Phase 1 (foundation hardening) is complete.** See `docs/audit_phase1.md`
+> for the full repository audit, what changed, and the roadmap. Highlights:
+> working local OCR (the previously bundled model was corrupt), a structured
+> provenance record on every output, per-analysis pipeline/model versioning,
+> case + audit-trail + review-decision tables, a prompt-injection trust
+> boundary with an output guard, hardened API routes, and 100 passing tests.
+
 This is **not a generic chatbot**. Every piece of output is labeled by its
 source so a reviewer always knows:
 
@@ -38,6 +45,8 @@ unit-testable and has no framework dependency except the API routes and UI.
 ```
 src/lib/threatlens/
   config/settings.ts     – centralized configuration & env vars
+  provenance.ts           – Provenance helpers + VERSIONS registry (see docs/provenance.md)
+  security/               – UUID guard, safe logger, prompt-injection boundary, markdown escaping
   schemas/models.ts       – shared types/contracts (zod) for every pipeline stage
   evidence/service.ts     – upload validation, hashing, safe storage (security-critical)
   ocr/service.ts          – tesseract.js OCR wrapper, structured OcrResult
@@ -53,15 +62,16 @@ src/lib/threatlens/
   pipeline.ts             – wires text → signals → risk → retrieval → LLM together
   utils/textMetrics.ts    – CER/WER metrics for OCR evaluation
 
-src/app/api/evidence/...  – HTTP routes (upload, verify, analyze, report)
+src/app/api/evidence/...  – HTTP routes (upload, verify, analyze, report, audit)
+src/app/api/cases/...     – case list/create/detail (case-management foundation)
 src/components/ThreatLensApp.tsx – the 4-step UI (Upload → Verify → Analyze → Document)
 src/db/schema.ts           – Drizzle table definitions
 data/knowledge_base/       – small, labeled development reference dataset
 data/evaluation/           – small, labeled development evaluation datasets
-data/tessdata/              – bundled English OCR trained data (offline OCR)
+data/tessdata/              – bundled English OCR model (tessdata_fast, gzipped) + SHA-256 MANIFEST.json
 eval/                       – evaluation scripts (classifier, retrieval, OCR)
 tests/                      – vitest unit/integration tests
-docs/                       – architecture, threat model, evaluation, limitations
+docs/                       – architecture, audit_phase1, threat_model, provenance
 ```
 
 See `docs/architecture.md` for the full data flow and design rationale.
@@ -92,15 +102,25 @@ npm run dev                 # http://localhost:3000
 Run tests:
 
 ```bash
-npx vitest run
+npm test                 # vitest (100 tests, includes a real OCR recognition test)
 ```
 
-Run the evaluation scripts:
+Run the evaluation scripts (results are written to `eval/results/*.json`):
 
 ```bash
-npx tsx eval/evaluate_classifier.ts
-npx tsx eval/evaluate_retrieval.ts
-npx tsx eval/evaluate_ocr.ts
+npm run eval             # classifier + retrieval + OCR
+npm run eval:classifier  # multi-label P/R/F1 on data/evaluation/classifier_examples.json
+npm run eval:retrieval   # recall@k on data/evaluation/retrieval_examples.json
+npm run eval:ocr         # CER/WER/confidence/latency on data/evaluation/ocr_examples/
+```
+
+Useful endpoints:
+
+```bash
+curl -s localhost:3000/api/health                         # db + OCR model integrity + pipeline versions
+curl -s -X POST localhost:3000/api/cases -H 'content-type: application/json' -d '{"title":"My case"}'
+curl -s -F file=@shot.png -F caseId=<case-uuid> localhost:3000/api/evidence
+curl -s localhost:3000/api/evidence/<id>/audit            # append-only, content-free audit trail
 ```
 
 ## Environment variables
@@ -120,10 +140,12 @@ centralized in `src/lib/threatlens/config/settings.ts`.
 | `THREATLENS_OCR_ENABLED` | Feature flag for OCR | `true` |
 | `THREATLENS_OCR_LANGDATA_DIR` | Local bundled tesseract trained-data dir | `data/tessdata` |
 | `THREATLENS_OCR_LOW_CONFIDENCE` | Confidence threshold to warn the user | `65` |
+| `THREATLENS_OCR_TIMEOUT_MS` | Hard ceiling for one OCR job; a hung worker is terminated and manual transcription offered | `60000` |
 | `THREATLENS_RISK_MEDIUM_THRESHOLD` / `_HIGH_THRESHOLD` / `_CRITICAL_THRESHOLD` | Risk score thresholds (0-10) | `2.5` / `5` / `8` |
 | `THREATLENS_RETRIEVAL_ENABLED` | Feature flag for retrieval | `true` |
 | `THREATLENS_RETRIEVAL_TOP_K` | Number of references returned | `3` |
 | `THREATLENS_RETRIEVAL_MIN_SIMILARITY` | Minimum cosine similarity to show a result | `0.03` |
+| `THREATLENS_LOG_LEVEL` | `info` / `warn` / `error` / `silent` for the content-free structured logger | `info` |
 
 Never commit `.env`. API keys are only read server-side (`process.env`) and
 are never sent to the browser.

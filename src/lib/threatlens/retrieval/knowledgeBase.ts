@@ -7,6 +7,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { settings } from "../config/settings";
+import { sha256Hex } from "../provenance";
 
 export interface KnowledgeDocument {
   id: string;
@@ -25,18 +26,37 @@ export interface KnowledgeChunk {
 }
 
 let cachedDocuments: KnowledgeDocument[] | null = null;
+let cachedVersion: string | null = null;
+
+/**
+ * Knowledge-base version recorded on every retrieved reference. Uses the
+ * explicit `version` field from references.json when present, and always
+ * appends a content hash so silent edits to the file are detectable.
+ */
+export function knowledgeBaseVersion(): string | null {
+  if (cachedDocuments === null) loadKnowledgeBase();
+  return cachedVersion;
+}
 
 export function loadKnowledgeBase(): KnowledgeDocument[] {
   if (cachedDocuments) return cachedDocuments;
   const filePath = path.join(process.cwd(), settings.retrieval.knowledgeBaseDir, "references.json");
   try {
     const raw = readFileSync(filePath, "utf-8");
-    const parsed = JSON.parse(raw) as { documents: KnowledgeDocument[] };
+    const parsed = JSON.parse(raw) as { version?: string; documents: KnowledgeDocument[] };
     cachedDocuments = parsed.documents ?? [];
+    cachedVersion = `${parsed.version ?? "unversioned"}+sha256:${sha256Hex(raw).slice(0, 12)}`;
   } catch {
     cachedDocuments = [];
+    cachedVersion = null;
   }
   return cachedDocuments;
+}
+
+/** Test helper: clears the cache so a rebuilt file is re-read. */
+export function resetKnowledgeBaseCache(): void {
+  cachedDocuments = null;
+  cachedVersion = null;
 }
 
 /** Chunks each document into paragraph-sized pieces for finer-grained retrieval. */

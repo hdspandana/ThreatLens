@@ -1,5 +1,6 @@
 {
   "_notice": "DEVELOPMENT REFERENCE DATASET. This is a small, hand-curated set of general safety/reporting guidance used to demonstrate ThreatLens's retrieval layer. It is NOT legal advice, NOT jurisdiction-specific, and NOT an exhaustive resource list. Only well-known, real public hotlines are referenced; no statute or case citations are included because this project cannot verify legal citations reliably.",
+  "version": "kb_dev_v1.0.0",
   "documents": [
     {
       "id": "kb-001",

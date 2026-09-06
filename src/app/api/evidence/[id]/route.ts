@@ -4,12 +4,15 @@
  * result, latest human-verified text, and latest analysis (if any).
  */
 import { getEvidence, getLatestAnalysis, getLatestOcrResult, getLatestVerifiedText } from "@/lib/threatlens/repository";
+import { requireUuidParam } from "@/lib/threatlens/security/http";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const invalid = requireUuidParam(id);
+  if (invalid) return invalid;
 
   const evidence = await getEvidence(id);
   if (!evidence) {

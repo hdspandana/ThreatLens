@@ -175,6 +175,7 @@ export async function storeOriginalEvidence(params: {
 
 export function buildEvidenceRecord(params: {
   id: string;
+  caseId?: string | null;
   originalFilename: string;
   storedPath: string;
   declaredMimeType: string;
@@ -184,6 +185,7 @@ export function buildEvidenceRecord(params: {
 }): EvidenceRecord {
   return {
     id: params.id,
+    caseId: params.caseId ?? null,
     originalFilename: sanitizeDisplayFilename(params.originalFilename),
     storedPath: params.storedPath,
     declaredMimeType: params.declaredMimeType,

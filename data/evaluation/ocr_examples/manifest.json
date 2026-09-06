@@ -1,0 +1,8 @@
+{
+  "_notice": "Synthetic OCR evaluation set generated with ImageMagick (rendered text, DejaVu Sans, clean background). These are EASY cases that verify the OCR engine and bundled language data work end-to-end; they are NOT representative of real screenshots (compression, fonts, dark mode, emoji, chat bubbles). Real-screenshot CER/WER will be worse. Do not present these numbers as production accuracy.",
+  "examples": [
+    { "id": "ocr-01", "file": "ocr-01.png", "reference": "I know where you live.\nYou have until tomorrow." },
+    { "id": "ocr-02", "file": "ocr-02.png", "reference": "Pay me 500 dollars or I will post\nyour photos unless you send it tonight.\nSent 10:42 PM" },
+    { "id": "ocr-03", "file": "ocr-03.png", "reference": "Hey, are we still on for coffee tomorrow?" }
+  ]
+}

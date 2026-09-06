@@ -6,6 +6,7 @@ export default defineConfig({
     environment: "node",
     include: ["tests/**/*.test.ts"],
     globals: false,
+    env: { THREATLENS_LOG_LEVEL: "silent" },
   },
   resolve: {
     alias: {
