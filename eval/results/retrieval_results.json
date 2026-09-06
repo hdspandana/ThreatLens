@@ -1,0 +1,92 @@
+{
+  "k": 3,
+  "recallAtK": 1,
+  "perExample": [
+    {
+      "query": "someone has been following me and watching my house",
+      "expected": [
+        "kb-003"
+      ],
+      "retrieved": [
+        "kb-003",
+        "kb-001"
+      ],
+      "hit": true
+    },
+    {
+      "query": "they want bitcoin or they will leak my private photos",
+      "expected": [
+        "kb-004"
+      ],
+      "retrieved": [
+        "kb-004"
+      ],
+      "hit": true
+    },
+    {
+      "query": "I am scared and think I am in immediate physical danger right now",
+      "expected": [
+        "kb-001"
+      ],
+      "retrieved": [
+        "kb-001"
+      ],
+      "hit": true
+    },
+    {
+      "query": "how do I preserve screenshots as evidence and hash them",
+      "expected": [
+        "kb-002"
+      ],
+      "retrieved": [
+        "kb-002",
+        "kb-001"
+      ],
+      "hit": true
+    },
+    {
+      "query": "is there a hotline I can call for support",
+      "expected": [
+        "kb-005"
+      ],
+      "retrieved": [
+        "kb-005",
+        "kb-006"
+      ],
+      "hit": true
+    },
+    {
+      "query": "someone claiming to be the bank asking for gift cards",
+      "expected": [
+        "kb-008"
+      ],
+      "retrieved": [
+        "kb-008",
+        "kb-004",
+        "kb-001"
+      ],
+      "hit": true
+    },
+    {
+      "query": "conditional threats and pressure to do what they say or else",
+      "expected": [
+        "kb-007"
+      ],
+      "retrieved": [
+        "kb-007",
+        "kb-008"
+      ],
+      "hit": true
+    },
+    {
+      "query": "how reliable is an automated AI severity label",
+      "expected": [
+        "kb-006"
+      ],
+      "retrieved": [
+        "kb-006"
+      ],
+      "hit": true
+    }
+  ]
+}

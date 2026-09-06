@@ -1,0 +1,37 @@
+{
+  "datasetNotice": "Synthetic OCR evaluation set generated with ImageMagick (rendered text, DejaVu Sans, clean background). These are EASY cases that verify the OCR engine and bundled language data work end-to-end; they are NOT representative of real screenshots (compression, fonts, dark mode, emoji, chat bubbles). Real-screenshot CER/WER will be worse. Do not present these numbers as production accuracy.",
+  "engine": "tesseract.js 5.1.1",
+  "languageDataSha256": "ed7fad25d49599fe024f4af8d607387d12174089172fbd8e0610a1f5f81e600d",
+  "examples": 3,
+  "meanCer": 0.011,
+  "meanWer": 0.056,
+  "meanConfidence": 95,
+  "meanLatencyMs": 151,
+  "perExample": [
+    {
+      "id": "ocr-01",
+      "succeeded": true,
+      "confidence": 94,
+      "cer": 0.02127659574468085,
+      "wer": 0.1111111111111111,
+      "latencyMs": 337
+    },
+    {
+      "id": "ocr-02",
+      "succeeded": true,
+      "confidence": 95,
+      "cer": 0.011494252873563218,
+      "wer": 0.05555555555555555,
+      "latencyMs": 82
+    },
+    {
+      "id": "ocr-03",
+      "succeeded": true,
+      "confidence": 96,
+      "cer": 0,
+      "wer": 0,
+      "latencyMs": 35
+    }
+  ],
+  "generatedAt": "2026-09-04T14:57:47.690Z"
+}

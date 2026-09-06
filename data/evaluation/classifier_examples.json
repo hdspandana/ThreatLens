@@ -1,0 +1,32 @@
+{
+  "_notice": "DEVELOPMENT EVALUATION DATASET. Hand-written by the project author for this portfolio project. Small (25 examples) and NOT representative of real-world message distributions -- results below must not be read as production accuracy claims.",
+  "examples": [
+    { "id": "ex-01", "text": "Hey, are we still on for coffee tomorrow?", "expectedCategories": [] },
+    { "id": "ex-02", "text": "Can you send me the report by Friday please?", "expectedCategories": [] },
+    { "id": "ex-03", "text": "Happy birthday! Hope you have a great day.", "expectedCategories": [] },
+    { "id": "ex-04", "text": "I will kill you if you tell anyone about this.", "expectedCategories": ["direct_threat"] },
+    { "id": "ex-05", "text": "You are going to regret this, I promise.", "expectedCategories": ["direct_threat"] },
+    { "id": "ex-06", "text": "I know where you live and I know where you work.", "expectedCategories": ["intimidation"] },
+    { "id": "ex-07", "text": "Watch your back, you have no idea what's coming.", "expectedCategories": ["intimidation"] },
+    { "id": "ex-08", "text": "If you don't reply right now I will tell everyone your secret.", "expectedCategories": ["coercion"] },
+    { "id": "ex-09", "text": "Do what I say or else you'll be sorry.", "expectedCategories": ["coercion"] },
+    { "id": "ex-10", "text": "Pay me $200 or I will tell your boss everything.", "expectedCategories": ["extortion"] },
+    { "id": "ex-11", "text": "Send bitcoin now or I will make your life miserable.", "expectedCategories": ["suspicious_demand"] },
+    { "id": "ex-12", "text": "I will post those photos unless you send me money today.", "expectedCategories": ["blackmail"] },
+    { "id": "ex-13", "text": "Unless you meet me tonight I will leak your private pictures.", "expectedCategories": ["blackmail"] },
+    { "id": "ex-14", "text": "I have been watching you all week outside your apartment.", "expectedCategories": ["stalking"] },
+    { "id": "ex-15", "text": "I drove by your house again last night, you weren't home.", "expectedCategories": ["stalking"] },
+    { "id": "ex-16", "text": "Send me nudes right now or I'll tell your parents.", "expectedCategories": ["sexual_harassment", "coercion"] },
+    { "id": "ex-17", "text": "You're worthless and nobody likes you, just disappear.", "expectedCategories": ["hate_abusive_language"] },
+    { "id": "ex-18", "text": "Kill yourself, nobody would even miss you.", "expectedCategories": ["hate_abusive_language"] },
+    { "id": "ex-19", "text": "This is the police, you need to pay a fine immediately via gift card.", "expectedCategories": ["impersonation", "suspicious_demand"] },
+    { "id": "ex-20", "text": "Why aren't you answering me, answer your phone right now, I've sent 30 texts.", "expectedCategories": ["repeated_unwanted_contact"] },
+    { "id": "ex-21", "text": "Stop ignoring me, I will keep calling until you pick up.", "expectedCategories": ["repeated_unwanted_contact"] },
+    { "id": "ex-22", "text": "The weather has been really nice this week, want to go hiking?", "expectedCategories": [] },
+    { "id": "ex-23", "text": "I can't believe the game went into overtime last night!", "expectedCategories": [] },
+    { "id": "ex-24", "text": "Maybe we should talk about this later, I'm a little upset.", "expectedCategories": [] },
+    { "id": "ex-25", "text": "You'll regret this decision for the rest of your life.", "expectedCategories": ["intimidation"] },
+    { "id": "ex-26", "text": "You'd better watch yourself around here.", "expectedCategories": [], "ambiguous": true, "note": "Menacing tone without a phrase matched by current rule patterns; a human reviewer might disagree with the deterministic baseline here." },
+    { "id": "ex-27", "text": "I swear, if you do that again there will be consequences.", "expectedCategories": [], "ambiguous": true, "note": "Vague, context-dependent statement. Could be read as mild frustration or veiled intimidation depending on relationship/history not present in the message alone." }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "_notice": "DEVELOPMENT EVALUATION DATASET for the retrieval layer. Hand-written queries mapped to the expected relevant document id(s) from data/knowledge_base/references.json.",
+  "examples": [
+    { "query": "someone has been following me and watching my house", "relevantDocumentIds": ["kb-003"] },
+    { "query": "they want bitcoin or they will leak my private photos", "relevantDocumentIds": ["kb-004"] },
+    { "query": "I am scared and think I am in immediate physical danger right now", "relevantDocumentIds": ["kb-001"] },
+    { "query": "how do I preserve screenshots as evidence and hash them", "relevantDocumentIds": ["kb-002"] },
+    { "query": "is there a hotline I can call for support", "relevantDocumentIds": ["kb-005"] },
+    { "query": "someone claiming to be the bank asking for gift cards", "relevantDocumentIds": ["kb-008"] },
+    { "query": "conditional threats and pressure to do what they say or else", "relevantDocumentIds": ["kb-007"] },
+    { "query": "how reliable is an automated AI severity label", "relevantDocumentIds": ["kb-006"] }
+  ]
+}

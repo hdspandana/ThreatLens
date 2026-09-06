@@ -1,56 +1,36 @@
-﻿# Virtual environment
-venv/
-env/
-.venv/
+# Dependencies
+node_modules/
 
-# Python cache
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.egg-info/
+# Next.js build output
+.next/
+out/
+next-env.d.ts
 
-# Environment / secrets
+# Environment secrets
 .env
+.env.local
+.env.*.local
 
-# Evidence and case data - NEVER commit real evidence or case records
-data/evidence_store/*
-!data/evidence_store/.gitkeep
+# Evidence storage (sensitive user uploads) -- never commit real evidence
+storage/evidence/*
+!storage/evidence/.gitkeep
 
-data/cases/*
-!data/cases/.gitkeep
+# Logs
+npm-debug.log*
+*.log
 
-# Evaluation working data
-eval/output/
-eval/*.tmp
-
-# OS/editor cruft
+# OS / editor
 .DS_Store
-Thumbs.db
 .vscode/
 .idea/
 
-# Streamlit local config/cache
-.streamlit/
+# Test / coverage output
+coverage/
 
-# Model caches (EasyOCR, transformers, torch)
-.EasyOCR/
-*.pt
-*.pth
+# Python local environment and cache
+venv/
+__pycache__/
+*.py[cod]
 
-# Generated report output
-*.pdf
-!templates/*.pdf
-
-# pytest cache
-.pytest_cache/
-
-# Manual OCR language test images (Section 15) - not part of the repo
-ocr_manual_test_images/
-
-# Manual OCR language test images (Section 15) - not part of the repo
-ocr_manual_test_images/
-
-# Manual OCR language test images (Section 15) - not part of the repo
+# Local OCR test images
 ocr_manual_test_images/

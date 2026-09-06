@@ -1,4 +1,4 @@
-﻿"""
+"""
 NyayaAI - Phase 0 entry point.
 
 This is a minimal placeholder to verify that the Streamlit environment

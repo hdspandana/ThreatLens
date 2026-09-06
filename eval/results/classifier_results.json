@@ -1,0 +1,374 @@
+{
+  "datasetNotice": "Small (n=27) hand-written development dataset. Not representative of real-world traffic; do not present these numbers as production accuracy.",
+  "exactSetMatchAccuracy": 0.963,
+  "micro": {
+    "precision": 1,
+    "recall": 0.952,
+    "f1": 0.976
+  },
+  "perCategory": {
+    "direct_threat": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 2
+    },
+    "intimidation": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 3
+    },
+    "coercion": {
+      "precision": 1,
+      "recall": 0.6666666666666666,
+      "f1": 0.8,
+      "support": 3
+    },
+    "extortion": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 1
+    },
+    "blackmail": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 2
+    },
+    "stalking": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 2
+    },
+    "sexual_harassment": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 1
+    },
+    "hate_abusive_language": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 2
+    },
+    "impersonation": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 1
+    },
+    "repeated_unwanted_contact": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 2
+    },
+    "suspicious_demand": {
+      "precision": 1,
+      "recall": 1,
+      "f1": 1,
+      "support": 2
+    }
+  },
+  "perExample": [
+    {
+      "id": "ex-01",
+      "text": "Hey, are we still on for coffee tomorrow?",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-02",
+      "text": "Can you send me the report by Friday please?",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-03",
+      "text": "Happy birthday! Hope you have a great day.",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-04",
+      "text": "I will kill you if you tell anyone about this.",
+      "expected": [
+        "direct_threat"
+      ],
+      "predicted": [
+        "direct_threat"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-05",
+      "text": "You are going to regret this, I promise.",
+      "expected": [
+        "direct_threat"
+      ],
+      "predicted": [
+        "direct_threat"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-06",
+      "text": "I know where you live and I know where you work.",
+      "expected": [
+        "intimidation"
+      ],
+      "predicted": [
+        "intimidation"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-07",
+      "text": "Watch your back, you have no idea what's coming.",
+      "expected": [
+        "intimidation"
+      ],
+      "predicted": [
+        "intimidation"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-08",
+      "text": "If you don't reply right now I will tell everyone your secret.",
+      "expected": [
+        "coercion"
+      ],
+      "predicted": [
+        "coercion"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-09",
+      "text": "Do what I say or else you'll be sorry.",
+      "expected": [
+        "coercion"
+      ],
+      "predicted": [
+        "coercion"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-10",
+      "text": "Pay me $200 or I will tell your boss everything.",
+      "expected": [
+        "extortion"
+      ],
+      "predicted": [
+        "extortion"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-11",
+      "text": "Send bitcoin now or I will make your life miserable.",
+      "expected": [
+        "suspicious_demand"
+      ],
+      "predicted": [
+        "suspicious_demand"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-12",
+      "text": "I will post those photos unless you send me money today.",
+      "expected": [
+        "blackmail"
+      ],
+      "predicted": [
+        "blackmail"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-13",
+      "text": "Unless you meet me tonight I will leak your private pictures.",
+      "expected": [
+        "blackmail"
+      ],
+      "predicted": [
+        "blackmail"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-14",
+      "text": "I have been watching you all week outside your apartment.",
+      "expected": [
+        "stalking"
+      ],
+      "predicted": [
+        "stalking"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-15",
+      "text": "I drove by your house again last night, you weren't home.",
+      "expected": [
+        "stalking"
+      ],
+      "predicted": [
+        "stalking"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-16",
+      "text": "Send me nudes right now or I'll tell your parents.",
+      "expected": [
+        "sexual_harassment",
+        "coercion"
+      ],
+      "predicted": [
+        "sexual_harassment"
+      ],
+      "correct": false,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-17",
+      "text": "You're worthless and nobody likes you, just disappear.",
+      "expected": [
+        "hate_abusive_language"
+      ],
+      "predicted": [
+        "hate_abusive_language"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-18",
+      "text": "Kill yourself, nobody would even miss you.",
+      "expected": [
+        "hate_abusive_language"
+      ],
+      "predicted": [
+        "hate_abusive_language"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-19",
+      "text": "This is the police, you need to pay a fine immediately via gift card.",
+      "expected": [
+        "impersonation",
+        "suspicious_demand"
+      ],
+      "predicted": [
+        "impersonation",
+        "suspicious_demand"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-20",
+      "text": "Why aren't you answering me, answer your phone right now, I've sent 30 texts.",
+      "expected": [
+        "repeated_unwanted_contact"
+      ],
+      "predicted": [
+        "repeated_unwanted_contact"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-21",
+      "text": "Stop ignoring me, I will keep calling until you pick up.",
+      "expected": [
+        "repeated_unwanted_contact"
+      ],
+      "predicted": [
+        "repeated_unwanted_contact"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-22",
+      "text": "The weather has been really nice this week, want to go hiking?",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-23",
+      "text": "I can't believe the game went into overtime last night!",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-24",
+      "text": "Maybe we should talk about this later, I'm a little upset.",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-25",
+      "text": "You'll regret this decision for the rest of your life.",
+      "expected": [
+        "intimidation"
+      ],
+      "predicted": [
+        "intimidation"
+      ],
+      "correct": true,
+      "ambiguous": false
+    },
+    {
+      "id": "ex-26",
+      "text": "You'd better watch yourself around here.",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": true
+    },
+    {
+      "id": "ex-27",
+      "text": "I swear, if you do that again there will be consequences.",
+      "expected": [],
+      "predicted": [],
+      "correct": true,
+      "ambiguous": true
+    }
+  ]
+}
